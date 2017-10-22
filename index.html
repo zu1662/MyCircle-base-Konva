@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>旋转圆</title>
+    <script src="konva/konva.js"></script>
+    <script src="myCircle.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+
+    <script>
+        //创建舞台
+        var stage = new Konva.Stage({
+            container: 'container',
+            width: window.innerWidth,
+            height: window.innerHeight
+        });
+
+        //中心点的坐标
+        var cenX = stage.width()/2;
+        var cenY = stage.height()/2;
+
+        //创建背景层
+        var bgLayer = new Konva.Layer();
+        var animateLayer = new Konva.Layer({
+            x: cenX,
+            y: cenY
+        });
+        stage.add(bgLayer);
+        stage.add(animateLayer);
+
+        //创建背景 的内环虚线
+        var innerCircle = new Konva.Circle({
+            x: cenX,
+            y: cenY,
+            radius: 150,
+            dash: [10,4],
+            stroke: '#ccc'
+        });
+        bgLayer.add(innerCircle);
+        //创建背景 的内环虚线
+        var outerCircle = new Konva.Circle({
+            x: cenX,
+            y: cenY,
+            radius: 250,
+            dash: [10,4],
+            stroke: '#ccc'
+        });
+        bgLayer.add(outerCircle);
+
+        //创建内部固定圆
+        var cenCircle = new myCircle({
+            x: cenX,
+            y: cenY,
+            innerRadius: 65,
+            outerRadius: 90,
+            text: 'web全栈',
+            text_color: '#fff'
+        });
+        cenCircle.addToLayer(bgLayer);
+
+
+        var group1 = new Konva.Group();
+        //创建二环圆1
+        var x2_1 = 150 * Math.cos(-60 * Math.PI / 180);
+        var y2_1 = 150 * Math.sin(-60 * Math.PI / 180);
+        var l2Circle1 = new myCircle({
+            x: x2_1,
+            y: y2_1,
+            innerRadius: 30,
+            outerRadius: 40,
+            text: 'CSS3',
+            text_color: '#fff',
+            innerFill: '#FACED6',
+            outerFill: '#E1E1E1'
+        });
+        l2Circle1.addToLayer(group1);
+
+        //创建二环圆2
+        var x2_2 = 150 * Math.cos(156 * Math.PI / 180);
+        var y2_2 = 150 * Math.sin(156 * Math.PI / 180);
+        var l2Circle2 = new myCircle({
+            x: x2_2,
+            y: y2_2,
+            innerRadius: 30,
+            outerRadius: 40,
+            text: 'HTML5',
+            text_color: '#fff',
+            innerFill: 'orange',
+            outerFill: '#E1E1E1'
+        });
+        l2Circle2.addToLayer(group1);
+        animateLayer.add(group1);
+
+
+
+        var group2 = new Konva.Group();
+        //创建三环圆1
+        var x3_1 = 250 * Math.cos(60 * Math.PI / 180);
+        var y3_1 = 250 * Math.sin(60 * Math.PI / 180);
+        var l3Circle1 = new myCircle({
+            x: x3_1,
+            y: y3_1,
+            innerRadius: 30,
+            outerRadius: 40,
+            text: 'JS',
+            text_color: '#fff',
+            innerFill: '#91BFF8',
+            outerFill: '#E1E1E1'
+        });
+        l3Circle1.addToLayer(group2);
+        animateLayer.add(group2);
+
+
+        //创建动画进行渲染
+        var angleSpeed = 60;
+        var anim = new Konva.Animation(function(frame){
+            var angleDiff = angleSpeed * frame.timeDiff / 1000;
+            group1.rotate(angleDiff);
+            group1.getChildren().each(function(e,i){
+                e.rotate(-angleDiff);
+            });
+            group2.rotate(-angleDiff);
+            group2.getChildren().each(function(e,i){
+                e.rotate(angleDiff);
+            });
+        },animateLayer);
+
+        //鼠标进入、出来事件
+        animateLayer.on('mouseover',function(){
+            angleSpeed = 20;
+        });
+        animateLayer.on('mouseout',function(){
+            angleSpeed = 60;
+        });
+
+        anim.start();
+        animateLayer.draw();
+        stage.draw();
+    </script>
+</body>
+</html>
